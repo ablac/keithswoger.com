@@ -7,25 +7,65 @@
   const sections = navigationLinks
     .map((link) => document.querySelector(link.getAttribute("href")))
     .filter(Boolean);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const scrollProgress = document.querySelector("[data-scroll-progress]");
+  const timeline = document.querySelector("[data-timeline]");
+  const projectImages = [...document.querySelectorAll(".project-media img")];
 
   let scrollFrame = 0;
 
-  const updateHeader = () => {
+  const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
+
+  const updateScrollEffects = () => {
     header?.classList.toggle("scrolled", window.scrollY > 18);
+
+    const scrollRange = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    scrollProgress?.style.setProperty("--page-progress", String(window.scrollY / scrollRange));
+
+    if (reduceMotion) {
+      timeline?.style.setProperty("--timeline-progress", "1");
+    } else {
+      projectImages.forEach((image) => {
+        const frame = image.closest(".project-media");
+        if (!frame) return;
+
+        const bounds = frame.getBoundingClientRect();
+        if (bounds.bottom < -100 || bounds.top > window.innerHeight + 100) return;
+
+        const frameCenter = bounds.top + bounds.height / 2;
+        const distanceFromCenter = window.innerHeight / 2 - frameCenter;
+        const shift = clamp((distanceFromCenter / window.innerHeight) * 18, -9, 9);
+        image.style.setProperty("--media-shift", `${shift.toFixed(2)}px`);
+      });
+
+      if (timeline) {
+        const bounds = timeline.getBoundingClientRect();
+        const startLine = window.innerHeight * 0.78;
+        const endLine = window.innerHeight * 0.3;
+        const travel = startLine - bounds.top;
+        const distance = bounds.height + startLine - endLine;
+        timeline.style.setProperty("--timeline-progress", String(clamp(travel / distance, 0, 1)));
+      }
+    }
+
     scrollFrame = 0;
+  };
+
+  const scheduleScrollEffects = () => {
+    if (!scrollFrame) {
+      scrollFrame = window.requestAnimationFrame(updateScrollEffects);
+    }
   };
 
   window.addEventListener(
     "scroll",
-    () => {
-      if (!scrollFrame) {
-        scrollFrame = window.requestAnimationFrame(updateHeader);
-      }
-    },
+    scheduleScrollEffects,
     { passive: true }
   );
+  window.addEventListener("resize", scheduleScrollEffects, { passive: true });
+  window.addEventListener("load", scheduleScrollEffects, { once: true });
 
-  updateHeader();
+  updateScrollEffects();
 
   const setMenu = (open) => {
     if (!menuButton || !navigation) return;
@@ -48,8 +88,6 @@
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") setMenu(false);
   });
-
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealItems.forEach((item) => item.classList.add("is-visible"));
@@ -111,6 +149,7 @@
   };
 
   const mapNodes = [...document.querySelectorAll("[data-map-node]")];
+  const mapReadout = document.querySelector(".map-readout");
   const readoutLabel = document.querySelector("[data-readout-label]");
   const readoutCopy = document.querySelector("[data-readout-copy]");
 
@@ -123,6 +162,10 @@
       node.setAttribute("aria-pressed", "true");
       if (readoutLabel) readoutLabel.textContent = detail.label;
       if (readoutCopy) readoutCopy.textContent = detail.copy;
+      if (!reduceMotion && mapReadout) {
+        mapReadout.classList.remove("is-updating");
+        window.requestAnimationFrame(() => mapReadout.classList.add("is-updating"));
+      }
     });
   });
 })();

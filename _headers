@@ -15,3 +15,9 @@
 
 /app.20260709.js
   Cache-Control: public, max-age=31536000, immutable
+
+/styles.20260709-motion.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/app.20260709-motion.js
+  Cache-Control: public, max-age=31536000, immutable
