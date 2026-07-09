@@ -6,3 +6,12 @@
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+/styles.20260709.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/resume.20260709.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/app.20260709.js
+  Cache-Control: public, max-age=31536000, immutable

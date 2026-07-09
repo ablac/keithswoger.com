@@ -75,9 +75,9 @@ def main() -> int:
         errors.extend(check_html(html_file))
 
     required_files = (
-        ROOT / "styles.css",
-        ROOT / "resume.css",
-        ROOT / "app.js",
+        ROOT / "styles.20260709.css",
+        ROOT / "resume.20260709.css",
+        ROOT / "app.20260709.js",
         ROOT / "robots.txt",
         ROOT / "sitemap.xml",
         ROOT / "_headers",
