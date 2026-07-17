@@ -30,4 +30,4 @@ The custom domain and redirects are managed in Cloudflare Pages. The `www` host 
 
 ## Project imagery
 
-The project captures show Keith's own work: AgentReef, AI Battle Arena, and Aquarium. They are compressed for the portfolio and retain links to the live projects.
+The project captures show Keith's own work: AgentReef, Kynetik, AI Battle Arena, and Aquarium. They are compressed for the portfolio and retain links to the live projects.
